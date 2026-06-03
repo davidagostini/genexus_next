@@ -32,11 +32,11 @@ Na pasta `<Instalação do GeneXus Next>\bl\`, crie (ou edite) o arquivo **`sett
 
 ```json
 {
-  "ProjectsFolder": "C:\\modelos\\david.agostini\\next\\KBNome",
-  "ProjectsDataFolder": "C:\\modelos\\david.agostini\\next\\KBNome",
-  "SqlServerDefaultInstance": "nomedamaquinasql",
-  "SqlUserName": "usuario",
-  "SqlUserPassword": "senha"
+  "ProjectsFolder": "C:\\modelos\\next",
+  "ProjectsDataFolder": "C:\\modelos\\next",
+  "SqlServerDefaultInstance": "127.0.0.1",
+  "SqlUserName": "usuario_sql",
+  "SqlUserPassword": "senha_sql"
 }
 ```
 
@@ -53,6 +53,8 @@ Na pasta `<Instalação do GeneXus Next>\bl\`, crie (ou edite) o arquivo **`sett
 | `SqlUserPassword` | Senha do usuário SQL. | Senha desse login. |
 
 💡 **Instância padrão vs nomeada:** instância padrão local → `localhost`, `.` ou o nome da máquina; instância nomeada → `MAQUINA\INSTANCIA` (ex.: `.\SQLEXPRESS`).
+
+💡 **Desktop vs Docker:** no Desktop, `127.0.0.1` aponta para o Windows. No Docker, `127.0.0.1` aponta para o próprio container; para acessar o SQL exposto no host, use normalmente `host.docker.internal`. Se o SQL estiver no mesmo `docker-compose`, também pode existir um alias de rede como `sql`.
 
 💡 **Autenticação Windows (integrada):** se for usar a conta do Windows em vez de usuário/senha, normalmente **omita** `SqlUserName` e `SqlUserPassword`. Para **autenticação SQL**, informe os dois (como acima).
 
@@ -77,6 +79,48 @@ Para a autenticação SQL (`SqlUserName`/`SqlUserPassword`) funcionar:
 2. **Feche e reabra** o GeneXus Next (ou rode `genexus.services.host.exe`).
 3. **Crie ou abra uma KB** — ela será criada na `ProjectsFolder` e os bancos no SQL Server configurado.
 4. Confirme no **SSMS** que os bancos da KB apareceram na instância.
+
+### Caso de uso validado — Desktop
+
+Exemplo validado com SQL Server acessível em `127.0.0.1`, autenticação SQL e pasta de KBs em `C:\modelos\next`:
+
+```powershell
+pwsh -ExecutionPolicy Bypass -File ".\.claude\skills\davidagostini_gxnext_configurar_sql\scripts\configure-sql.ps1" `
+  -GxNextPath "C:\GeneXus\Next" `
+  -ProjectsFolder "C:\modelos\next" `
+  -ProjectsDataFolder "C:\modelos\next" `
+  -SqlServerDefaultInstance "127.0.0.1" `
+  -SqlUserName "usuario_sql" `
+  -SqlUserPassword "senha_sql"
+```
+
+Resultado esperado:
+
+- Conexão testada antes de gravar.
+- `settings-overrides.json` atualizado em `C:\GeneXus\Next\bl\`.
+- Pasta `C:\modelos\next` criada automaticamente se não existir.
+- Chaves existentes, como `PluginsCatalogPath`, preservadas.
+
+### Caso de uso validado — Docker
+
+Exemplo validado com o bind mount `gxbl` em `D:\docker\nextdocker\data\gxbl` e pasta de KBs montada no container como `/app/kbs`:
+
+```powershell
+pwsh -ExecutionPolicy Bypass -File ".\.claude\skills\davidagostini_gxnext_configurar_sql\scripts\configure-sql.ps1" `
+  -SettingsDir "D:\docker\nextdocker\data\gxbl" `
+  -ProjectsFolder "/app/kbs" `
+  -ProjectsDataFolder "/app/kbs" `
+  -SqlServerDefaultInstance "host.docker.internal" `
+  -SqlUserName "usuario_sql" `
+  -SqlUserPassword "senha_sql"
+```
+
+Resultado esperado:
+
+- Conexão testada antes de gravar.
+- `settings-overrides.json` atualizado no bind mount `gxbl`.
+- A pasta `/app/kbs` não é criada pelo PowerShell no host; ela deve existir como mount do container.
+- Reinicie o container/serviço do GeneXus Next para reler a configuração.
 
 ---
 

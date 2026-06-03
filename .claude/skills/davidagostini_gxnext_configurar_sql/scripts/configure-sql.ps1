@@ -34,6 +34,10 @@ function Write-Ok($m){ Write-Host "  [ok] $m" -ForegroundColor Green }
 function Write-Note($m){ Write-Host "  [!] $m" -ForegroundColor Yellow }
 function Write-Err($m){ Write-Host "  [x] $m" -ForegroundColor Red }
 
+function Test-WindowsPath([string]$Path){
+  return ($Path -match '^[a-zA-Z]:\\') -or ($Path -match '^\\\\')
+}
+
 function Test-SqlConnection {
   param([string]$Instance, [bool]$WinAuth, [string]$User, [string]$Pass)
 
@@ -138,9 +142,11 @@ Write-Ok "ProjectsFolder = $ProjectsFolder"
 Write-Ok "SqlServerDefaultInstance = $SqlServerDefaultInstance"
 
 # --- Garantir a pasta da KB -------------------------------------------------
-if(-not (Test-Path -LiteralPath $ProjectsFolder)){
+if((Test-WindowsPath $ProjectsFolder) -and -not (Test-Path -LiteralPath $ProjectsFolder)){
   New-Item -ItemType Directory -Path $ProjectsFolder -Force | Out-Null
   Write-Ok "Pasta criada: $ProjectsFolder"
+} elseif(-not (Test-WindowsPath $ProjectsFolder)){
+  Write-Note "Pasta da KB nao criada no host porque o caminho parece ser do container: $ProjectsFolder"
 }
 
 # --- Avisos finais ----------------------------------------------------------

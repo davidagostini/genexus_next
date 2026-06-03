@@ -23,6 +23,15 @@ function Write-Step($m){ Write-Host "==> $m" -ForegroundColor Cyan }
 function Write-Ok($m){ Write-Host "  [ok] $m" -ForegroundColor Green }
 function Write-Note($m){ Write-Host "  [!] $m" -ForegroundColor Yellow }
 
+function Convert-DockerDesktopHostPath([string]$Path){
+  if($Path -match '^/run/desktop/mnt/host/([a-zA-Z])/(.*)$'){
+    $drive = $Matches[1].ToUpperInvariant()
+    $rest = $Matches[2] -replace '/', '\'
+    return "$drive`:\$rest"
+  }
+  return $Path
+}
+
 if(-not (Test-Path -LiteralPath $ZipPath)){ throw "Zip nao encontrado: $ZipPath" }
 
 $containerId = $null
@@ -59,10 +68,11 @@ if(-not $UserAppDataPath){
     throw "Nao encontrei o bind mount automaticamente. Abra o Docker Desktop -> container do GeneXus -> aba 'Bind mounts', copie o caminho do host (ex.: ...\GeneXus Next\gxbl) e rode novamente com -UserAppDataPath."
   }
 
-  $UserAppDataPath = $best.Source
+  $UserAppDataPath = Convert-DockerDesktopHostPath $best.Source
   $containerId = $best.Id
   Write-Ok "Container: $($best.Name) ($($best.Id))"
   Write-Ok "user-app-data: $UserAppDataPath"
+  if($UserAppDataPath -ne $best.Source){ Write-Note "Caminho Docker Desktop convertido de '$($best.Source)' para '$UserAppDataPath'" }
 }
 
 if(-not (Test-Path -LiteralPath $UserAppDataPath)){

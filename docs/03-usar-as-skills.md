@@ -89,10 +89,16 @@ O script **testa a conexão primeiro** e só grava se estiver OK (use `-Force` p
 ```powershell
 pwsh -ExecutionPolicy Bypass -File ".\.claude\skills\davidagostini_gxnext_configurar_sql\scripts\configure-sql.ps1" `
   -GxNextPath "C:\Program Files\GeneXus\GeneXus Next" `
-  -ProjectsFolder "C:\modelos\david.agostini\next\KBNome" `
+  -ProjectsFolder "C:\modelos\next" `
   -SqlServerDefaultInstance "NOME-MAQUINA\SQLEXPRESS" `
-  -SqlUserName "usuario" -SqlUserPassword "senha"
+  -SqlUserName "usuario_sql" -SqlUserPassword "senha_sql"
 ```
+
+**Casos validados:**
+
+- Desktop: `-GxNextPath "C:\GeneXus\Next"`, `-ProjectsFolder "C:\modelos\next"` e `-SqlServerDefaultInstance "127.0.0.1"`.
+- Docker: `-SettingsDir "D:\docker\nextdocker\data\gxbl"`, `-ProjectsFolder "/app/kbs"` e `-SqlServerDefaultInstance "host.docker.internal"`.
+- Use placeholders como `usuario_sql` e `senha_sql` na documentação; nunca registre credenciais reais.
 
 ## 🟦 Passo 5 — Instalar o WorkWithPlus
 
@@ -111,7 +117,53 @@ pwsh -ExecutionPolicy Bypass -File ".\.claude\skills\davidagostini_gxnext_instal
   -PluginsCatalogPath "C:\GeneXus\pluginsCatalog"
 ```
 
-Depois faça os **passos manuais finais**: reiniciar o GeneXus Next → **Plugin Explorer** (habilitar/atualizar) → conferir no **About** que frontend e backend coincidem.
+**Ou rode direto** (Docker):
+
+```powershell
+pwsh -ExecutionPolicy Bypass -File ".\.claude\skills\davidagostini_gxnext_instalar_wwp\scripts\install-wwp-docker.ps1" `
+  -ZipPath "C:\Downloads\WorkWithPlus_Next_Plugin_v16u1.0_8078.zip" `
+  -RestartContainer
+```
+
+Depois faça os **passos manuais finais**: reiniciar o GeneXus Next → abrir **View → Other Tool Windows → Plugin Explorer** → localizar **WorkWithPlus** → clicar em **Install** (ou atualizar/habilitar) → conferir no **About** que frontend e backend coincidem.
+
+> ⚠️ A skill prepara os arquivos do plugin, mas não clica no GeneXus Next. Depois de rodar o script, sempre acesse **View → Other Tool Windows → Plugin Explorer** e instale/habilite o **WorkWithPlus** manualmente.
+
+### Caso de uso validado — Desktop
+
+Exemplo validado em um ambiente com GeneXus Next Desktop instalado em `C:\GeneXus\Next` e cache limpo ao final:
+
+```powershell
+pwsh -ExecutionPolicy Bypass -File ".\.claude\skills\davidagostini_gxnext_instalar_wwp\scripts\install-wwp-desktop.ps1" `
+  -GxNextPath "C:\GeneXus\Next" `
+  -ZipPath "C:\Downloads\WorkWithPlus_Next_Plugin_v16u1.0_8078.zip" `
+  -PluginsCatalogPath "C:\GeneXus\pluginsCatalog" `
+  -ClearCache
+```
+
+Resultado esperado:
+
+- `PluginsCatalogPath` gravado em `C:\GeneXus\Next\bl\settings-overrides.json`.
+- Plugin copiado para `C:\GeneXus\pluginsCatalog\WorkWithPlus\<versão interna do pacote>`.
+- Para o zip `WorkWithPlus_Next_Plugin_v16u1.0_8078.zip`, a versão interna detectada pode ser `16.1.0-b08078`.
+- Cache limpo em `%AppData%\GeneXus Next\Cache\Cache_Data`.
+
+### Caso de uso validado — Docker
+
+Exemplo validado em um ambiente com containers `genexus-*` ativos no Docker Desktop e bind mount `user-app-data` apontando para uma pasta Windows:
+
+```powershell
+pwsh -ExecutionPolicy Bypass -File ".\.claude\skills\davidagostini_gxnext_instalar_wwp\scripts\install-wwp-docker.ps1" `
+  -ZipPath "C:\Downloads\WorkWithPlus_Next_Plugin_v16u1.0_8078.zip" `
+  -UserAppDataPath "D:\docker\nextdocker\data\gxbl"
+```
+
+Resultado esperado:
+
+- Plugin extraído em `D:\docker\nextdocker\data\gxbl\<versão interna do pacote>`.
+- `frontend.zip` expandido para `...\frontend`.
+- `backend.zip` expandido para `...\backend`.
+- Quando o script descobre automaticamente um caminho como `/run/desktop/mnt/host/d/...`, ele converte para `D:\...` antes de gravar.
 
 ---
 

@@ -73,9 +73,11 @@ Localiza o container do GeneXus e o bind mount `user-app-data` (`gxbl`), extrai 
 ## Passo 3 — Passos manuais finais (sempre)
 
 1. **Reinicie o GeneXus Next.** (No Docker, isso recicla e **sobe o container de volta no ar**.)
-2. **View → Other Tool Windows → Plugin Explorer** → habilite/atualize o **WorkWithPlus**.
+2. Abra **View → Other Tool Windows → Plugin Explorer**, localize **WorkWithPlus** e clique em **Install** (ou atualize/habilite se já aparecer instalado).
 3. No diálogo **About**, confirme que **frontend** e **backend** mostram a mesma versão.
 4. Se **não baterem**: limpe `%AppData%\GeneXus Next\Cache\Cache_Data` (ou rode o script Desktop com `-ClearCache`) e reabra.
+
+> Sempre avise o usuário: os scripts preparam os arquivos, mas o WorkWithPlus só fica disponível após instalar/habilitar pelo **Plugin Explorer** no menu **View → Other Tool Windows**.
 
 ## Observações
 

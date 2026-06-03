@@ -32,9 +32,9 @@ Pergunte e **confirme** com o usuário:
 1. **Pasta de configuração** — onde está o `settings.json`:
    - Desktop: a pasta de instalação do GeneXus Next (que contém `bl`) → `-GxNextPath`.
    - Docker: o bind mount `gxbl` do container → `-SettingsDir`.
-2. **`ProjectsFolder`** — pasta das Knowledge Bases (ex.: `C:\modelos\david.agostini\next\KBNome`). Troque `KBNome` pelo nome real da KB.
+2. **`ProjectsFolder`** — pasta das Knowledge Bases (ex.: `C:\modelos\next`). No Docker, normalmente use o caminho visto dentro do container (ex.: `/app/kbs`).
 3. **`ProjectsDataFolder`** — normalmente igual ao `ProjectsFolder` (se omitido, o script repete o valor).
-4. **`SqlServerDefaultInstance`** — instância/servidor SQL (ex.: `localhost`, `.\SQLEXPRESS`, `NOME-MAQUINA\INSTANCIA`).
+4. **`SqlServerDefaultInstance`** — instância/servidor SQL (ex.: `127.0.0.1`, `.\SQLEXPRESS`, `NOME-MAQUINA\INSTANCIA`). No Docker, se o SQL está exposto no host, use normalmente `host.docker.internal`; `127.0.0.1` dentro do container aponta para o próprio container.
 5. **Autenticação:**
    - **SQL** (usuário/senha): informe `-SqlUserName` e `-SqlUserPassword`.
    - **Windows** (integrada): use `-WindowsAuth` (não grava usuário/senha).
@@ -48,9 +48,20 @@ Exemplo (autenticação SQL, Desktop):
 ```powershell
 pwsh -ExecutionPolicy Bypass -File "<skill>\scripts\configure-sql.ps1" `
   -GxNextPath "C:\Program Files\GeneXus\GeneXus Next" `
-  -ProjectsFolder "C:\modelos\david.agostini\next\KBNome" `
+  -ProjectsFolder "C:\modelos\next" `
   -SqlServerDefaultInstance "NOME-MAQUINA\SQLEXPRESS" `
-  -SqlUserName "usuario" -SqlUserPassword "senha"
+  -SqlUserName "usuario_sql" -SqlUserPassword "senha_sql"
+```
+
+Exemplo validado (autenticação SQL, Docker):
+
+```powershell
+pwsh -ExecutionPolicy Bypass -File "<skill>\scripts\configure-sql.ps1" `
+  -SettingsDir "D:\docker\nextdocker\data\gxbl" `
+  -ProjectsFolder "/app/kbs" `
+  -ProjectsDataFolder "/app/kbs" `
+  -SqlServerDefaultInstance "host.docker.internal" `
+  -SqlUserName "usuario_sql" -SqlUserPassword "senha_sql"
 ```
 
 Exemplo (autenticação Windows):
@@ -58,12 +69,12 @@ Exemplo (autenticação Windows):
 ```powershell
 pwsh -ExecutionPolicy Bypass -File "<skill>\scripts\configure-sql.ps1" `
   -GxNextPath "C:\Program Files\GeneXus\GeneXus Next" `
-  -ProjectsFolder "C:\modelos\david.agostini\next\KBNome" `
+  -ProjectsFolder "C:\modelos\next" `
   -SqlServerDefaultInstance "localhost" -WindowsAuth
 ```
 
 **Comportamento:** o script **testa a conexão primeiro**:
-- Conexão **OK** → grava as chaves no `settings-overrides.json` e cria a `ProjectsFolder`.
+- Conexão **OK** → grava as chaves no `settings-overrides.json` e cria a `ProjectsFolder` quando ela for um caminho Windows local. Caminhos de container, como `/app/kbs`, não são criados no host.
 - Conexão **falha** → **não grava nada** e mostra o erro (use `-Force` para gravar mesmo assim).
 - Para pular o teste, use `-SkipConnectionTest`.
 

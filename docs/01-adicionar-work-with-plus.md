@@ -86,6 +86,8 @@ O GeneXus Next lê as configurações de `<Instalação do GeneXus Next>\bl\sett
 ```
 Ex.: `C:\GeneXus\pluginsCatalog\WorkWithPlus\16.1.0.8078\`
 
+> 💡 Em alguns pacotes, a versão interna lida pelo `plugin.json` pode vir em outro formato (ex.: `16.1.0-b08078`, mesmo quando o arquivo baixado menciona `8078`). Use a versão interna do pacote como nome da pasta da versão.
+
 **4. Extraia o `.zip` na pasta da versão**
 O conteúdo deve conter `plugin.json`, `backend.zip`, `frontend.zip` e demais arquivos.
 
@@ -93,8 +95,11 @@ O conteúdo deve conter `plugin.json`, `backend.zip`, `frontend.zip` e demais ar
 Feche e reabra o aplicativo Desktop **completamente**.
 
 **6. Habilite/atualize e verifique a versão**
-- Use o **Plugin Explorer** para **habilitar/atualizar** o WorkWithPlus.
+- Use o menu **View → Other Tool Windows → Plugin Explorer** para abrir o **Plugin Explorer**.
+- Localize o **WorkWithPlus** e clique em **Install** (ou atualize se ele já aparecer instalado).
 - Confirme no diálogo **About** (na barra de ferramentas) que as versões de **frontend** e **backend** **coincidem**.
+
+> ⚠️ Importante: depois de copiar/atualizar o WorkWithPlus pelo catálogo de plugins, ele **ainda precisa ser habilitado no GeneXus Next**. O passo final é sempre abrir **View → Other Tool Windows → Plugin Explorer** e instalar/habilitar o **WorkWithPlus**.
 
 **7. Se as versões não baterem — limpe o cache**
 Apague os arquivos de cache em:
@@ -198,4 +203,4 @@ Recursos **ainda não disponíveis** nesta edição do WWP para GeneXus Next:
 
 ---
 
-⬅️ [Voltar ao índice](../README.md) · ➡️ Próximo: _02 — Configurar o SQL Server_ (em breve)
+⬅️ [Voltar ao índice](../README.md) · ➡️ Próximo: [02 — Configurar o SQL Server](02-configurar-sql-server.md)
