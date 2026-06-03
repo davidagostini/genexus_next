@@ -43,6 +43,28 @@ Escolha **uma** opção:
 
 Depois, **reinicie o Claude Code** para ele listar as skills.
 
+## 🟦 Passo 2.1 — Rodar também no Codex (mesma fonte de arquivos)
+
+Cada agente procura skills em pastas diferentes:
+
+| Agente | Onde lê |
+|--------|---------|
+| Claude Code | `.claude/skills/` |
+| Codex CLI | `.codex/skills/` e `.agents/skills/` |
+| Gemini CLI | `.agents/skills/` |
+
+Para os **dois (ou três) lerem os MESMOS arquivos**, sem duplicar nada, rode **uma vez** após clonar:
+
+```powershell
+pwsh -ExecutionPolicy Bypass -File .\setup-skills.ps1
+```
+
+Isso cria *junctions* (atalhos de diretório do Windows — **não precisam de admin**) `.agents/skills` e `.codex/skills` apontando para `.claude/skills`. A partir daí:
+
+- A pasta **real e única** é `.claude/skills/` — edite as skills só ali.
+- **Claude, Codex e Gemini** passam a ler os **mesmos arquivos**.
+- As junctions são locais (estão no `.gitignore`) — rode o `setup-skills.ps1` **uma vez por clone/máquina**.
+
 ## 🟦 Passo 3 — Verificar
 
 Digite `/` e confirme que aparecem:

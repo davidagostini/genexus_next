@@ -12,14 +12,21 @@ Guias **práticos** de configuração e uso do GeneXus Next — direto ao ponto,
 | 02 | [Configurar o SQL Server](docs/02-configurar-sql-server.md) | ✅ Pronto |
 | 03 | [Usar as skills de automação](docs/03-usar-as-skills.md) | ✅ Pronto |
 
-## Skills de automação (Claude Code)
+## Skills de automação (Claude Code + Codex)
 
-O repositório inclui duas skills em `.claude/skills/` que automatizam os guias acima:
+O repositório inclui duas skills (padrão aberto `SKILL.md`) que automatizam os guias acima:
 
 - **`/davidagostini_gxnext_instalar_wwp`** — instala/atualiza o WorkWithPlus (Desktop ou Docker).
 - **`/davidagostini_gxnext_configurar_sql`** — configura o SQL Server (testa a conexão antes de gravar).
 
-Para usar (inclusive em outra máquina), veja **[03 — Usar as skills de automação](docs/03-usar-as-skills.md)**.
+A pasta **canônica** é `.claude/skills/` (lida pelo Claude Code). Para o **Codex/Gemini** lerem os
+**mesmos arquivos** (fonte única, sem cópia), rode uma vez após clonar:
+
+```powershell
+pwsh -ExecutionPolicy Bypass -File .\setup-skills.ps1
+```
+
+Passo a passo completo em **[03 — Usar as skills de automação](docs/03-usar-as-skills.md)**.
 
 ## Como usar esta documentação
 
