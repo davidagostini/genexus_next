@@ -1,0 +1,7 @@
+# Configuração local do GeneXus Next — contém credenciais, NUNCA versionar
+settings-overrides.json
+
+# Ruído de SO / editor
+Thumbs.db
+.DS_Store
+*.log
